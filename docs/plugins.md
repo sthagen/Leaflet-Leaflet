@@ -627,6 +627,17 @@ The following plugins change the way that tile or image layers are displayed in 
 			<a href="https://publiclab.org">Public Lab</a>
 		</td>
 	</tr>
+	<tr>
+		<td>
+			<a href="https://github.com/equinor/leaflet.tilelayer.gloperations">Leaflet.TileLayer.GLOperations</a>
+		</td><td>
+			WebGL TileLayer: Colorize floating-point pixels, mouse event handlers for pixel values, hillshading, contours,
+			transitions, filter and do calculations on multiple layers.
+			 (<a href="https://equinor.github.io/leaflet.tilelayer.gloperations/">Demo</a>).
+		</td><td>
+			<a href="https://github.com/thor85">Thorbjørn Horgen</a>
+		</td>
+	</tr>
 </table>
 
 
@@ -1315,11 +1326,11 @@ These plugins provide new markers or news ways of converting abstract data into 
 	</tr>
     	<tr>
 		<td>
-			<a href="https://github.com/marslan390/BeautifyMarker">Leaflet.BeautifyMarkers</a>
+			<a href="https://github.com/masajid390/BeautifyMarker">Leaflet.BeautifyMarkers</a>
 		</td><td>
 			Lightweight plugin that adds colorful iconic markers without image and gives full control of style to end user (i.e. Unlimited colors and CSS styling).
 		</td><td>
-			<a href="https://github.com/marslan390">Muhammad Arslan Sajid</a>
+			<a href="https://github.com/masajid390">Muhammad Arslan Sajid</a>
 		</td>
 	</tr>
 	<tr>
@@ -1845,6 +1856,17 @@ These plugins provide new markers or news ways of converting abstract data into 
 			<a href="https://github.com/iDerekLi/">Derek Li</a>
 		</td>
 	</tr>
+	<tr>
+		<td>
+			<a href="https://github.com/coyotesqrl/Leaflet.ArrowCircle">Leaflet.ArrowCircle</a>
+		</td>
+		<td>
+		    A Marker extension to display circles with directional arrows.
+		</td>
+		<td>
+			<a href="https://github.com/coyotesqrl/">R.A. Porter</a>
+		</td>
+	</tr>
 </table>
 
 
@@ -1970,7 +1992,29 @@ These plugins animate markers or some geometries. See also [geometries with time
 			<a href="https://github.com/ggolikov">Grigory Golikov</a>
 		</td>
 	</tr>
-	</table>
+	<tr>
+		<td>
+			<a href="https://github.com/onaci/leaflet-point-animator">leaflet-point-animator</a>
+		</td>
+		<td>
+			Animate a large number of GeoJSON points. (<a href="https://onaci.github.io/leaflet-point-animator">demo</a>)
+		</td>
+		<td>
+			<a href="https://github.com/danwild">danwild</a>, <a href="https://github.com/onaci">onaci</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<a href="https://github.com/onaci/leaflet-temporal-geojson">leaflet-temporal-geojson</a>
+		</td>
+		<td>
+			Flexible animation of GeoJSON features. (<a href="https://onaci.github.io/leaflet-temporal-geojson">demo</a>)
+		</td>
+		<td>
+			<a href="https://github.com/danwild">danwild</a>, <a href="https://github.com/onaci">onaci</a>
+		</td>
+	</tr>
+</table>
 
 
 
@@ -2123,7 +2167,7 @@ These plugins create heatmaps and heatmap-like visualizations from vector data.
 			High performance Javascript heatmap plugin using WebGL.
 
 		</td><td>
-			<a href="https://twitter.com/bozdoz">Benjamin J DeLong</a>
+			<a href="http://ursudio.com/webgl-heatmap-leaflet/">Benjamin J DeLong</a>
 		</td>
 	</tr>
 	<tr>
@@ -2309,7 +2353,7 @@ Allows users to create, draw, edit and/or delete points, lines and polygons.
 		<td>
 			<a href="https://github.com/geoman-io/leaflet-geoman">Leaflet-Geoman</a>
 		</td><td>
-			⭐ Geometry Management for Leaflet 1.0 and higher. Draw, Edit, Cut, Drag and Snap Layers like Markers, Circles, Rectangles, Polylines, Polygons, LayerGroups, geoJSON, MultiPolygons, MultiLineStrings. Supports holes in polygons, snapping, canvas mode and more. (<a href="https://geoman.io/leaflet-geoman">Demo</a>)
+			Geometry Management for Leaflet 1.0 and higher. Draw, Edit, Cut, Drag and Snap Layers like Markers, Circles, Rectangles, Polylines, Polygons, LayerGroups, geoJSON, MultiPolygons, MultiLineStrings. Supports holes in polygons, snapping, canvas mode and more. (<a href="https://geoman.io/leaflet-geoman">Demo</a>)
 		</td><td>
 			<a href="https://github.com/codeofsumit">Sumit Kumar</a>
 		</td>
@@ -2508,6 +2552,17 @@ Most data is two-dimensional (latitude and longitude), but some data has more di
 <table class="plugins"><tr><th>Plugin</th><th>Description</th><th>Maintainer</th></tr>
 	<tr>
 		<td>
+			<a href="https://github.com/slutske22/leaflet-topography">Leaflet Topography</a>
+		</td>
+		<td>
+			A set of tools for calculating and visualizing topographic data (elevation, slope, aspect) at lightning speed.  Based on Mapbox RGB Encoded DEM tiles.
+		</td>
+		<td>
+			<a href="https://github.com/slutske22">Seth Lutske</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
 			<a href="https://github.com/svitkin/leaflet-timeline-slider/">Leaflet.timelineSlider</a>
 		</td>
 		<td>
@@ -2591,6 +2646,17 @@ Most data is two-dimensional (latitude and longitude), but some data has more di
 		</td>
 		<td>
 			<a href="https://github.com/linghuam">linghuam</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<a href="https://github.com/zimmicz/Leaflet-Timeline-Control">Leaflet Timeline Control</a>
+		</td>
+		<td>
+			Unopinionated timeline control that helps you display time series data. <a href="https://codesandbox.io/s/leaflet-timeline-control-ibyby">Demo</a>.
+		</td>
+		<td>
+			<a href="https://github.com/zimmicz">Michal Zimmermann</a>
 		</td>
 	</tr>
 </table>
@@ -2809,7 +2875,7 @@ These plugins help users select either overlays or areas in the map.
 			<a href="https://github.com/zakjan/leaflet-lasso">leaflet-lasso</a>
 		</td>
 		<td>
-			True lasso selection plugin (<a href="http://zakjan.github.io/leaflet-lasso/">Demo</a>)
+			Lasso selection plugin (<a href="http://zakjan.github.io/leaflet-lasso/">Demo</a>)
 		</td>
 		<td>
 			<a href="https://github.com/zakjan">Jan Zak</a>
@@ -3991,6 +4057,18 @@ Buttons, sliders, toolbars, sidebars, and panels.
 			<a href="https://github.com/publiclab">Public Lab</a>
 		</td>
 	</tr>
+	<tr>
+		<td>
+			<a href="https://github.com/ptma/Leaflet.Legend">Leaflet.Legend
+			</a>
+		</td>
+		<td>
+			Display legend symbols and toggle overlays(<a href="https://ptma.github.io/Leaflet.Legend/examples/legend.html">Demo</a>).
+		</td>
+		<td>
+			<a href="https://github.com/ptma">JJ Jin</a>
+		</td>
+	</tr>
 </table>
 
 
@@ -4039,6 +4117,15 @@ Print or export your map.
 			Allows users to print full page map directly from the browser.
 		</td><td>
 			<a href="https://github.com/Igor-Vladyka">Igor Vladyka</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<a href="https://github.com/pasichnykvasyl/Leaflet.BigImage">Leaflet.BigImage</a>
+		</td><td>
+			Allows users to download an image with a scaled-up version of the visible map.
+		</td><td>
+			<a href="https://github.com/pasichnykvasyl">Vasyl Pasichnyk (Oswald)</a>
 		</td>
 	</tr>
 </table>
@@ -4382,6 +4469,29 @@ External services that transform an address or the name of a place into latitude
 			<a href="https://github.com/louh">Lou Huang</a>
 		</td>
 	</tr>
+		<tr>
+		<td>
+			<a href="https://github.com/location-iq/leaflet-geocoder">Leaflet LocationIQ Geocoder</a>
+		</td>
+		<td>
+			A plugin that adds the ability to search (geocode) a Leaflet-powered map using <a href="https://locationiq.com/">LocationIQ</a>.
+		</td>
+		<td>
+			<a href="https://github.com/location-iq">LocationIQ</a>
+		</td>
+	</tr>
+	</tr>
+		<tr>
+		<td>
+			<a href="https://github.com/mmaciejkowalski/L.Highlight">L.Highlight</a>
+		</td>
+		<td>
+			A plugin that adds the ability to quick highlighting streets and areas using <a href="https://nominatim.org/">Nominatim</a>.
+		</td>
+		<td>
+			<a href="https://github.com/mmaciejkowalski">Maciej Kowalski</a>
+		</td>
+	</tr>
 </table>
 
 
@@ -4668,6 +4778,15 @@ Ease your development integrating Leaflet into a development framework or automa
 			<a href="https://github.com/KoRiGaN">Mickaël KoRiGaN</a>
 		</td>
 	</tr>
+	<tr>
+		<td>
+			<a href="https://github.com/axyjo/leaflet-rails">leaflet-rails gem</a>
+		</td><td>
+			This gem provides the leaflet.js map display library for your Rails 5 application. <a href="https://rubygems.org/gems/leaflet-rails">leaflet-rails on RubyGems</a>
+		</td><td>
+			<a href="https://github.com/axyjo">Akshay Joshi</a>
+		</td>
+	</tr>
 </table>
 
 
@@ -4701,7 +4820,7 @@ The following plugins integrate Leaflet into third party services or websites.
 			Interactive and flexible shortcode to create multiple maps in posts and pages,
 			and to add multiple markers on those maps.
 		</td><td>
-			<a href="https://twitter.com/bozdoz">Benjamin J DeLong</a>
+			<a href="https://bozdoz.com/projects/leaflet-map">Benjamin J DeLong</a>
 		</td>
 	</tr>
 	<tr>
@@ -4795,6 +4914,15 @@ The following plugins integrate Leaflet into third party services or websites.
 		Simple plugin for adding Facebook like button as a control.
 	  </td><td>
 		<a href="https://marcinwasilewski.eu/u">Marcin Wasilewski</a>
+	</td>
+  </tr>
+  <tr>
+	<td>
+		<a href="https://github.com/alexboia/WP-Trip-Summary/">WP-Trip-Summary</a>
+	</td><td>
+		A WordPress trip summary plugin to help travel bloggers manage and display structured information about their train rides and biking or hiking trips.
+	  </td><td>
+		<a href="https://wordpress.org/plugins/wp-trip-summary/">Alexandru Boia</a>
 	</td>
   </tr>
 </table>
