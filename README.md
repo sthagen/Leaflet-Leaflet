@@ -8,11 +8,11 @@ As Vladimir [expressed a few days ago](https://twitter.com/LeafletJS/status/1496
 
 > If you want to help, educate yourself and others on the Russian threat, follow reputable journalists, demand severe Russian sanctions and Ukrainian support from your leaders, protest war, reach out to Ukrainian friends, donate to Ukrainian charities. Just don't be silent.
 
-Ukrainians are recommending the [https://savelife.in.ua/en/donate/](https://savelife.in.ua/en/donate/) charity. Consider also the [Ukrainian Red Cross](https://redcross.org.ua/en/).
+Ukrainians are recommending the [Come Back Alive](https://www.comebackalive.in.ua) charity. For other options, see [SupportUkraineNow.org](https://supportukrainenow.org).
 
 If an appeal to humanity doesn't work for you, I'll appeal to your egoism: the future of Ukrainian citizens is the future of Leaflet.
 
-It is chilling to see Leaflet being used for [factual reporting of the war](https://liveuamap.com/) and for coordination of humanitarian efforts [in Romaina](https://refugees.ro/) and [in Poland](https://dopomoha.pl/). We commend these uses of Leaflet.
+It is chilling to see Leaflet being used for [factual reporting of the war](https://liveuamap.com/) and for coordination of humanitarian efforts [in Romania](https://refugees.ro/) and [in Poland](https://dopomoha.pl/). We commend these uses of Leaflet.
 
 If you support the actions of the Russian government (even after reading all this), do everyone else a favour and [carry some seeds in your pocket](https://www.theguardian.com/world/video/2022/feb/25/ukrainian-woman-sunflower-seeds-russian-soldiers-video).
 
