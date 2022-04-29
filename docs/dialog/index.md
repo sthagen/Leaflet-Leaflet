@@ -1,12 +1,8 @@
 ---
-layout: ua
+layout: dialog_frame
 ---
 
-<style>
-	blockquote {
-		font-style: italic;
-	}
-</style>
+<h1><img src="/docs/images/logo-ua.png" alt="Leaflet" width="300" /></h1>
 
 Leaflet was created 11 years ago by [Volodymyr Agafonkin](https://agafonkin.com), a Ukrainian citizen living in Kyiv.
 
@@ -26,20 +22,5 @@ It is chilling to see Leaflet being used for [documenting Russia's war crimes](h
 
 If you support the actions of the Russian government (even after reading all this), do everyone else a favour and [carry some seeds in your pocket](https://www.theguardian.com/world/video/2022/feb/25/ukrainian-woman-sunflower-seeds-russian-soldiers-video).
 
-<p class="quiet">(The API documentation, plugins list, download info, and all other contents of the website have been temporarily moved <a href="SlavaUkraini/">over here</a>)</p>
-
 Yours truly,
 Leaflet maintainers.
-
-<script>
-	var referrer = document.referrer;
-	var host = window.location.host + '/';
-	if (referrer && referrer.indexOf(host) > -1) {
-		var url = referrer.split(host);
-		var target = url[1];
-		if (target) {
-			var link = document.querySelector('a[href="SlavaUkraini/"]');
-			link.href = 'https://leafletjs.com/SlavaUkraini/' + target;
-		}
-	}
-</script>
