@@ -165,6 +165,39 @@ describe('Popup', function () {
 		expect(spy.called).to.be(true);
 	});
 
+	// Related to #8558
+	it("references the correct targets in popupopen event with multiple markers bound to same popup", function () {
+		var marker1 = L.marker(center, {testId: 'markerA'});
+		var marker2 = L.marker([57.123076977278, 44.861962891635], {testId: 'markerB'});
+		map.addLayer(marker1);
+		map.addLayer(marker2);
+
+		var popup = L.popup().setContent('test');
+
+		marker2.bindPopup(popup);
+		marker1.bindPopup(popup);
+
+		var spy = sinon.spy();
+		var spy2 = sinon.spy();
+
+		marker1.on('popupopen', function (e) {
+			spy();
+			expect(e.target.options.testId).to.eql('markerA');
+		});
+
+		marker2.on('popupopen', function (e) {
+			spy2();
+			expect(e.target.options.testId).to.eql('markerB');
+		});
+
+		expect(spy.called).to.be(false);
+		marker2.openPopup();
+		expect(spy.called).to.be(false);
+		expect(spy2.called).to.be(true);
+		marker1.closePopup().openPopup();
+		expect(spy.called).to.be(true);
+	});
+
 	it("triggers popupclose on marker when popup closes", function () {
 		var marker1 = L.marker(center);
 		var marker2 = L.marker([57.123076977278, 44.861962891635]);
@@ -423,6 +456,28 @@ describe('Popup', function () {
 				.down().moveBy(10, 10, 20).up();
 		});
 
+		it('moves the map over a short distance to the popup if it is not in the view (keepInView)', function (done) {
+			container.style.position = 'absolute';
+			container.style.left = 0;
+			container.style.top = 0;
+			container.style.zIndex = 10000;
+
+			// to prevent waiting until the animation is finished
+			map.options.inertia = false;
+
+			var spy = sinon.spy();
+			map.on('autopanstart', spy);
+
+			// Short hop to the edge of the map (at time of writing, will trigger an animated pan)
+			var p = L.popup({keepInView: true}).setContent('Popup').setLatLng(map.getBounds()._northEast);
+			map.once('moveend', function () {
+				expect(spy.callCount).to.be(1);
+				expect(map.getBounds().contains(p.getLatLng())).to.be(true);
+				done();
+			});
+			map.openPopup(p);
+		});
+
 		it('moves the map over a long distance to the popup if it is not in the view (keepInView)', function (done) {
 			container.style.position = 'absolute';
 			container.style.left = 0;
@@ -434,14 +489,30 @@ describe('Popup', function () {
 
 			var spy = sinon.spy();
 			map.on('autopanstart', spy);
-			var p = L.popup({keepInView: true}).setContent('Popup').setLatLng([center[0], center[1] + 50]);
-			map.openPopup(p);
 
-			setTimeout(function () {
-				expect(spy.called).to.be(true);
+			// Long hop (at time of writing, will trigger a view reset)
+			var p = L.popup({keepInView: true}).setContent('Popup').setLatLng([center[0], center[1] + 50]);
+			map.once('moveend', function () {
+				expect(spy.callCount).to.be(1);
 				expect(map.getBounds().contains(p.getLatLng())).to.be(true);
 				done();
-			}, 800);
+			});
+			map.openPopup(p);
+		});
+
+		it('moves on setLatLng after initial autopan', function (done) {
+			var p = L.popup().setContent('Popup').setLatLng(map.getBounds().getNorthEast());
+
+			map.once('moveend', function () {
+				map.once('moveend', function () {
+					expect(map.getBounds().contains(p.getLatLng())).to.be(true);
+					done();
+				});
+
+				p.setLatLng(map.getBounds().getNorthEast());
+			});
+
+			map.openPopup(p);
 		});
 
 		it("shows the popup at the correct location when multiple markers are registered", function () {
@@ -522,7 +593,6 @@ describe('Popup', function () {
 		});
 
 		it("does not close popup when clicking on it's tip", function () {
-			if (L.Browser.ie) { this.skip(); } // fixme
 			container.style.position = "absolute";
 			container.style.top = "0";
 			container.style.left = "0";

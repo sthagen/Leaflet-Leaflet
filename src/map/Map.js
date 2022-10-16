@@ -1106,13 +1106,12 @@ export var Map = Evented.extend({
 		DomUtil.addClass(container, 'leaflet-container' +
 			(Browser.touch ? ' leaflet-touch' : '') +
 			(Browser.retina ? ' leaflet-retina' : '') +
-			(Browser.ielt9 ? ' leaflet-oldie' : '') +
 			(Browser.safari ? ' leaflet-safari' : '') +
 			(this._fadeAnimated ? ' leaflet-fade-anim' : ''));
 
 		var position = DomUtil.getStyle(container, 'position');
 
-		if (position !== 'absolute' && position !== 'relative' && position !== 'fixed') {
+		if (position !== 'absolute' && position !== 'relative' && position !== 'fixed' && position !== 'sticky') {
 			container.style.position = 'relative';
 		}
 

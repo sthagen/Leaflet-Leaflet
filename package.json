@@ -1,11 +1,11 @@
 {
   "name": "leaflet",
-  "version": "1.9.1",
+  "version": "1.9.2",
   "homepage": "https://leafletjs.com/",
   "description": "JavaScript library for mobile-friendly interactive maps",
   "devDependencies": {
     "@mapbox/eslint-plugin-script-tags": "^1.0.0",
-    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-json": "^5.0.0",
     "bundlemon": "^1.4.0",
     "eslint": "^8.23.1",
     "eslint-config-mourner": "^2.0.3",
@@ -19,7 +19,7 @@
     "karma-firefox-launcher": "^2.1.2",
     "karma-mocha": "^2.0.1",
     "karma-rollup-preprocessor": "^7.0.8",
-    "karma-safari-launcher": "~1.0.0",
+    "karma-safarinative-launcher": "^1.1.0",
     "karma-sinon": "^1.0.5",
     "karma-time-stats-reporter": "^0.1.0",
     "leafdoc": "^2.3.0",
@@ -54,89 +54,6 @@
     "bundlemon": "bundlemon --subProject js --defaultCompression none && bundlemon --subProject js-gzip --defaultCompression gzip",
     "serve": "cd docs && bundle exec jekyll serve",
     "prepare": "husky install"
-  },
-  "eslintConfig": {
-    "ignorePatterns": [
-      "dist",
-      "debug",
-      "docs/docs/highlight",
-      "docs/examples/choropleth/us-states.js",
-      "docs/examples/geojson/sample-geojson.js",
-      "docs/examples/map-panes/eu-countries.js",
-      "docs/examples/extending/extending-2-layers.md",
-      "docs/_posts/2012*",
-      "docs/_site",
-      "build/integrity.js"
-    ],
-    "root": true,
-    "globals": {
-      "globalThis": true
-    },
-    "env": {
-      "commonjs": true,
-      "amd": true,
-      "node": false
-    },
-    "extends": "mourner",
-    "plugins": [
-      "@mapbox/eslint-plugin-script-tags"
-    ],
-    "parserOptions": {
-      "ecmaVersion": 6,
-      "sourceType": "module"
-    },
-    "rules": {
-      "linebreak-style": [
-        0,
-        "unix"
-      ],
-      "no-mixed-spaces-and-tabs": [
-        2,
-        "smart-tabs"
-      ],
-      "indent": [
-        2,
-        "tab",
-        {
-          "VariableDeclarator": 0,
-          "flatTernaryExpressions": true
-        }
-      ],
-      "curly": 2,
-      "spaced-comment": 2,
-      "strict": 0,
-      "wrap-iife": 0,
-      "key-spacing": 0,
-      "consistent-return": 0,
-      "no-unused-expressions": [
-        "error",
-        {
-          "allowShortCircuit": true
-        }
-      ]
-    },
-    "overrides": [
-      {
-        "files": [
-          "build/**/*"
-        ],
-        "env": {
-          "node": true
-        },
-        "rules": {
-          "global-require": 0
-        }
-      },
-      {
-        "files": [
-          "*.md"
-        ],
-        "rules": {
-          "eol-last": 0,
-          "no-unused-vars": 0
-        }
-      }
-    ]
   },
   "repository": {
     "type": "git",

@@ -250,7 +250,6 @@ describe('TileLayer', function () {
 		// browsers due to CSS animations!
 		it.skipIfNo3d("Loads 290, unloads 275 kittens on MAD-TRD flyTo()", function (done) {
 			this.timeout(10000); // This test takes longer than usual due to frames
-			if (L.Browser.ie) { this.retries(3); } // It also sometimes fails in IE10 on CI
 
 			var mad = [40.40, -3.7], trd = [63.41, 10.41];
 
@@ -485,8 +484,6 @@ describe('TileLayer', function () {
 
 	describe('#setUrl', function () {
 		it('fires only one load event', function (done) {
-			if (L.Browser.ie) { this.retries(3); }
-
 			var layer = L.tileLayer(placeKitten).addTo(map);
 			var counts = {
 				load: 0,
@@ -494,17 +491,21 @@ describe('TileLayer', function () {
 			};
 			map.setView([0, 0], 1);
 
+			var timer;
 			layer.on('tileload load', function (e) {
 				counts[e.type]++;
+
+				// Assets are in memory so all of these events should fire within <1ms of eachother
+				// Let's check assertions after a 10ms debounce
+				clearTimeout(timer);
+				timer = setTimeout(function () {
+					expect(counts.load).to.equal(1);
+					expect(counts.tileload).to.equal(8);
+					done();
+				}, 10);
 			});
 
 			layer.setUrl(placeKitten);
-
-			setTimeout(function () {
-				expect(counts.load).to.equal(1);
-				expect(counts.tileload).to.equal(8);
-				done();
-			}, 250);
 		});
 	});
 });
