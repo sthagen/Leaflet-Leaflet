@@ -1317,6 +1317,68 @@ describe("Map", () => {
 			expect(map.getSize().x).to.equal(600);
 			expect(map.latLngToContainerPoint(center).x).to.equal(300);
 		});
+
+		it("auto invalidateSize after container resize", (done) => {
+			map.setView([0, 0], 0);
+			const spy = sinon.spy();
+			map.on("resize", spy);
+
+			expect(spy.called).to.not.be.ok();
+
+			map.getContainer().style.width = '200px';
+
+			map.on("resize", () => {
+				expect(spy.called).to.be.ok();
+				done();
+			});
+		});
+
+		it("disables auto invalidateSize", (done) => {
+			clock.restore();
+			map.remove();
+
+			const center = [0, 0];
+
+			// The edge case is only if view is set directly during map initialization
+			map = L.map(container, {
+				center,
+				zoom: 0,
+				trackResize: false
+			});
+
+			const spy = sinon.spy();
+			map.invalidateSize = spy;
+
+			expect(spy.called).to.not.be.ok();
+
+			map.getContainer().style.width = '200px';
+
+			setTimeout(() => {
+				expect(spy.called).to.not.be.ok();
+				done();
+				// we need the 10 ms to be sure that the ResizeObserver is not triggered
+			}, 10);
+		});
+
+		it("makes sure that auto invalidateSize is removed", (done) => {
+			clock.restore();
+			map.remove();
+
+			const spy = sinon.spy();
+			map.invalidateSize = spy;
+			expect(spy.called).to.not.be.ok();
+
+			map.getContainer().style.width = '200px';
+
+			setTimeout(() => {
+				expect(spy.called).to.not.be.ok();
+
+				// make sure afterEach works correctly
+				map = L.map(container);
+				done();
+				// we need the 10 ms to be sure that the ResizeObserver is not triggered
+			}, 10);
+		});
 	});
 
 	describe("#flyTo", () => {
@@ -2158,6 +2220,23 @@ describe("Map", () => {
 			const p = map.latLngToLayerPoint(center);
 			expect(p.x).to.be.equal(200);
 			expect(p.y).to.be.equal(200);
+		});
+	});
+
+	describe("#layerPointToLatLng", () => {
+
+		it("throws if map is not set before", () => {
+			expect(() => {
+				map.layerPointToLatLng();
+			}).to.throwError();
+		});
+
+		it("returns the corresponding geographical coordinate for a pixel coordinate relative to the origin pixel", () => {
+			const center = L.latLng(10, 10);
+			map.setView(center, 10);
+			const point = L.point(200, 200);
+			const latlng = map.layerPointToLatLng(point);
+			expect(latlng).to.be.nearLatLng([9.9999579356371, 10.000305175781252]);
 		});
 	});
 
