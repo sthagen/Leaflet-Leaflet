@@ -155,7 +155,7 @@ describe('Util', () => {
 
 		it('creates a distinct options object', () => {
 			const opts = {},
-			    o = L.Util.create({options: opts});
+			    o = Object.create({options: opts});
 			L.Util.setOptions(o, {});
 			expect(o.options).not.to.equal(opts);
 		});
@@ -169,7 +169,7 @@ describe('Util', () => {
 
 		it('inherits options prototypally', () => {
 			const opts = {},
-			    o = L.Util.create({options: opts});
+			    o = Object.create({options: opts});
 			L.Util.setOptions(o, {});
 			opts.foo = 'bar';
 			expect(o.options.foo).to.eql('bar');
@@ -209,13 +209,5 @@ describe('Util', () => {
 			expect(L.Util.template('{-y}', {'-y': 1})).to.eql('1');
 			expect(L.Util.template('{Day Of Month}', {'Day Of Month': 30})).to.eql('30');
 		});
-	});
-
-	describe('#isArray', () => {
-		expect(L.Util.isArray([1, 2, 3])).to.be(true);
-		/* eslint no-array-constructor: 0 */
-		expect(L.Util.isArray(new Array(1, 2, 3))).to.be(true);
-		expect(L.Util.isArray('blabla')).to.be(false);
-		expect(L.Util.isArray({0: 1, 1: 2})).to.be(false);
 	});
 });
