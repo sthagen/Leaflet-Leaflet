@@ -105,7 +105,7 @@ export const DivOverlay = Layer.extend({
 		}
 
 		if (map._fadeAnimated) {
-			DomUtil.setOpacity(this._container, 0);
+			this._container.style.opacity = 0;
 		}
 
 		clearTimeout(this._removeTimeout);
@@ -113,27 +113,27 @@ export const DivOverlay = Layer.extend({
 		this.update();
 
 		if (map._fadeAnimated) {
-			DomUtil.setOpacity(this._container, 1);
+			this._container.style.opacity = 1;
 		}
 
 		this.bringToFront();
 
 		if (this.options.interactive) {
-			DomUtil.addClass(this._container, 'leaflet-interactive');
+			this._container.classList.add('leaflet-interactive');
 			this.addInteractiveTarget(this._container);
 		}
 	},
 
 	onRemove(map) {
 		if (map._fadeAnimated) {
-			DomUtil.setOpacity(this._container, 0);
-			this._removeTimeout = setTimeout(DomUtil.remove.bind(null, this._container), 200);
+			this._container.style.opacity = 0;
+			this._removeTimeout = setTimeout(() => this._container.remove(), 200);
 		} else {
-			DomUtil.remove(this._container);
+			this._container.remove();
 		}
 
 		if (this.options.interactive) {
-			DomUtil.removeClass(this._container, 'leaflet-interactive');
+			this._container.classList.remove('leaflet-interactive');
 			this.removeInteractiveTarget(this._container);
 		}
 	},

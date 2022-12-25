@@ -63,37 +63,6 @@ describe('DomUtil', () => {
 		});
 	});
 
-
-	describe('#remove', () => {
-		it('removes element', () => {
-			const e = L.DomUtil.create('div', 'test', el);
-			L.DomUtil.remove(e);
-			expect(el.contains(e)).to.be(false);
-		});
-
-		it('does nothing if element hasn\'t a parent', () => {
-			const e = L.DomUtil.create('div', 'test');
-			L.DomUtil.remove(e);
-			expect(document.body.contains(e)).to.be(false);
-		});
-	});
-
-	describe('#empty', () => {
-		it('removes all children of element', () => {
-			L.DomUtil.create('div', 'test', el);
-			L.DomUtil.create('div', 'test1', el);
-			L.DomUtil.create('div', 'test2', el);
-			L.DomUtil.empty(el);
-			expect(el.childNodes.length).to.be(0);
-		});
-
-		it('does nothing if element doesn\'t have children', () => {
-			expect(el.childNodes.length).to.be(0);
-			L.DomUtil.empty(el);
-			expect(el.childNodes.length).to.be(0);
-		});
-	});
-
 	describe('#toFront', () => {
 		it('moves el to last child position parent element', () => {
 			const elm = L.DomUtil.create('div', 'childContainer', el);
@@ -146,130 +115,6 @@ describe('DomUtil', () => {
 		});
 	});
 
-	describe('#hasClass', () => {
-		it('determines if an HTML element has a class', () => {
-			const element = document.createElement('div');
-			element.classList.add('newClass', 'someOtherClass');
-			expect(L.DomUtil.hasClass(element, 'newClass')).to.be(true);
-		});
-
-		it('determines if an SVG element has a class', () => {
-			const element = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-			element.classList.add('newClass', 'someOtherClass');
-			expect(L.DomUtil.hasClass(element, 'newClass')).to.be(true);
-		});
-	});
-
-	describe('#addClass', () => {
-		it('adds a class to an HTML element', () => {
-			const element = document.createElement('div');
-			L.DomUtil.addClass(element, 'newClass');
-			expect(element.classList.value).to.be('newClass');
-		});
-
-		it('adds multiple classes to an HTML element', () => {
-			const element = document.createElement('div');
-			L.DomUtil.addClass(element, 'newClass someOtherClass');
-			expect(element.classList.value).to.be('newClass someOtherClass');
-		});
-
-		it('adds a class to an SVG element', () => {
-			const element = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-			L.DomUtil.addClass(element, 'newClass');
-			expect(element.classList.value).to.be('newClass');
-		});
-
-		it('adds multiple classes to an SVG element', () => {
-			const element = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-			L.DomUtil.addClass(element, 'newClass someOtherClass');
-			expect(element.classList.value).to.be('newClass someOtherClass');
-		});
-	});
-
-	describe('#removeClass', () => {
-		it('removes the class from an HTML element', () => {
-			const element = document.createElement('div');
-			element.classList.add('newClass');
-			L.DomUtil.removeClass(element, 'newClass');
-			expect(element.classList.value).to.be('');
-		});
-
-		it('removes the class from an SVG element', () => {
-			const element = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-			element.classList.add('newClass');
-			L.DomUtil.removeClass(element, 'newClass');
-			expect(element.classList.value).to.be('');
-		});
-	});
-
-	describe('#setClass', () => {
-		it('sets the class on an HTML element', () => {
-			const element = document.createElement('div');
-			element.classList.add('someOtherClass');
-			L.DomUtil.setClass(element, 'newClass');
-			expect(element.classList.value).to.be('newClass');
-		});
-
-		it('sets the class on an SVG element', () => {
-			const element = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-			element.classList.add('someOtherClass');
-			L.DomUtil.setClass(element, 'newClass');
-			expect(element.classList.value).to.be('newClass');
-		});
-	});
-
-	describe('#getClass', () => {
-		it('gets the class of an HTML element', () => {
-			const element = document.createElement('div');
-			element.classList.add('newClass');
-			expect(L.DomUtil.getClass(element)).to.equal('newClass');
-		});
-
-		it('gets the class of an SVG element', () => {
-			const element = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-			element.classList.add('newClass');
-			expect(L.DomUtil.getClass(element)).to.equal('newClass');
-		});
-	});
-
-	describe('#setOpacity', () => {
-		it('sets opacity of element', () => {
-			L.DomUtil.setOpacity(el, 1);
-			expect(el.style.opacity).to.equal('1');
-			L.DomUtil.setOpacity(el, 0.5);
-			expect(el.style.opacity).to.equal('0.5');
-			L.DomUtil.setOpacity(el, '0');
-			expect(el.style.opacity).to.equal('0');
-		});
-
-		it('replaces the class of SGV element by the specified argument', () => {
-			const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-			L.DomUtil.setClass(svg, 'testclass');
-			expect(svg.className.baseVal).to.be('testclass');
-		});
-
-		it('gets the class name of SVG element', () => {
-			const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-			svg.className.baseVal = 'testclass';
-			expect(L.DomUtil.getClass(svg)).to.be('testclass');
-		});
-
-		it('returns empty string if it has no classes', () => {
-			expect(L.DomUtil.getClass(el)).to.be('');
-		});
-	});
-
-	describe('#testProp', () => {
-		it('check array of style names return first valid style name for element', () => {
-			const hasProp = L.DomUtil.testProp(['-webkit-transform', '-webkit-transform', '-ms-tranform', '-o-transform']);
-			expect(hasProp).to.match(/(?:-webkit-transform|-webkit-transform|-ms-tranform|-o-transform)/);
-		});
-
-		it('returns false if property doesn\'t exist', () => {
-			expect(L.DomUtil.testProp(['testprop'])).to.be(false);
-		});
-	});
-
 	describe('#setTransform', () => {
 		it('resets the transform style of an el.', () => {
 			expect(L.DomUtil.getStyle(el, 'transform')).to.be.equal('none');
@@ -288,22 +133,22 @@ describe('DomUtil', () => {
 
 		it('reset the 3d CSS transform when offset and scale aren\'t specified', () => {
 			L.DomUtil.setTransform(el);
-			expect(el.style[L.DomUtil.TRANSFORM]).to.be('translate3d(0px, 0px, 0px)');
+			expect(el.style.transform).to.be('translate3d(0px, 0px, 0px)');
 		});
 
 		it('set the 3d CSS transform with just the specified point if scale isn\'t specified', () => {
 			L.DomUtil.setTransform(el, new L.Point(1, 1));
-			expect(el.style[L.DomUtil.TRANSFORM]).to.be('translate3d(1px, 1px, 0px)');
+			expect(el.style.transform).to.be('translate3d(1px, 1px, 0px)');
 		});
 
 		it('set 3d CSS transform to translate3d(0px, 0px, 0) and add to it scale(${scalevalue}) if only scale is specified', () => {
 			L.DomUtil.setTransform(el, undefined, 5);
-			expect(el.style[L.DomUtil.TRANSFORM]).to.be('translate3d(0px, 0px, 0px) scale(5)');
+			expect(el.style.transform).to.be('translate3d(0px, 0px, 0px) scale(5)');
 		});
 
 		it('set the 3d CSS transform with the specified point ant the corresponding scale', () => {
 			L.DomUtil.setTransform(el, new L.Point(1, 1), 5);
-			expect(el.style[L.DomUtil.TRANSFORM]).to.be('translate3d(1px, 1px, 0px) scale(5)');
+			expect(el.style.transform).to.be('translate3d(1px, 1px, 0px) scale(5)');
 		});
 	});
 
@@ -404,28 +249,33 @@ describe('DomUtil', () => {
 		});
 	});
 
-
 	describe('#disableTextSelection, #enableTextSelection', () => {
-		it('disable / enable the selectstart DOM events for the user ', () => {
-			let selectionPrevented;
-			function checkPrevented(e) {
-				if (e.defaultPrevented) {
-					selectionPrevented = true;
-				} else {
-					selectionPrevented = false;
-				}
-			}
-			const child = document.createElement('div');
-			el.appendChild(child);
+		const documentStyle = document.documentElement.style;
+		// Safari still needs a vendor prefix, we need to detect with property name is supported.
+		const userSelectProp = ['userSelect', 'WebkitUserSelect'].find(prop => prop in documentStyle);
 
+		beforeEach(() => expect(documentStyle[userSelectProp]).to.be(''));
+		afterEach(() => { documentStyle[userSelectProp] = ''; });
+
+		it('disables and enables text selection', () => {
 			L.DomUtil.disableTextSelection();
-			window.addEventListener('selectstart', checkPrevented);
-			happen.once(child, {type: 'selectstart'});
-			expect(selectionPrevented).to.be.ok();
-
+			expect(documentStyle[userSelectProp]).to.be('none');
 			L.DomUtil.enableTextSelection();
-			happen.once(child, {type: 'selectstart'});
-			expect(selectionPrevented).to.not.be.ok();
+			expect(documentStyle[userSelectProp]).to.be('');
+		});
+
+		it('restores the text selection previously set', () => {
+			documentStyle[userSelectProp] = 'text';
+			L.DomUtil.disableTextSelection();
+			L.DomUtil.enableTextSelection();
+			expect(documentStyle[userSelectProp]).to.be('text');
+		});
+
+		it('restores the text selection previously set when disabling multiple times', () => {
+			L.DomUtil.disableTextSelection();
+			L.DomUtil.disableTextSelection();
+			L.DomUtil.enableTextSelection();
+			expect(documentStyle[userSelectProp]).to.be('');
 		});
 	});
 

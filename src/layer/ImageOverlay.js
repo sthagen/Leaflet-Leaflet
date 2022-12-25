@@ -80,7 +80,7 @@ export const ImageOverlay = Layer.extend({
 		}
 
 		if (this.options.interactive) {
-			DomUtil.addClass(this._image, 'leaflet-interactive');
+			this._image.classList.add('leaflet-interactive');
 			this.addInteractiveTarget(this._image);
 		}
 
@@ -89,7 +89,7 @@ export const ImageOverlay = Layer.extend({
 	},
 
 	onRemove() {
-		DomUtil.remove(this._image);
+		this._image.remove();
 		if (this.options.interactive) {
 			this.removeInteractiveTarget(this._image);
 		}
@@ -191,9 +191,9 @@ export const ImageOverlay = Layer.extend({
 		const wasElementSupplied = this._url.tagName === 'IMG';
 		const img = this._image = wasElementSupplied ? this._url : DomUtil.create('img');
 
-		DomUtil.addClass(img, 'leaflet-image-layer');
-		if (this._zoomAnimated) { DomUtil.addClass(img, 'leaflet-zoom-animated'); }
-		if (this.options.className) { DomUtil.addClass(img, this.options.className); }
+		img.classList.add('leaflet-image-layer');
+		if (this._zoomAnimated) { img.classList.add('leaflet-zoom-animated'); }
+		if (this.options.className) { img.classList.add(...Util.splitWords(this.options.className)); }
 
 		img.onselectstart = Util.falseFn;
 		img.onmousemove = Util.falseFn;
@@ -243,7 +243,7 @@ export const ImageOverlay = Layer.extend({
 	},
 
 	_updateOpacity() {
-		DomUtil.setOpacity(this._image, this.options.opacity);
+		this._image.style.opacity = this.options.opacity;
 	},
 
 	_updateZIndex() {

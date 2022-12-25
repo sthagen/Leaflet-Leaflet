@@ -150,14 +150,14 @@ export const Layers = Control.extend({
 	// @method expand(): this
 	// Expand the control container if collapsed.
 	expand() {
-		DomUtil.addClass(this._container, 'leaflet-control-layers-expanded');
+		this._container.classList.add('leaflet-control-layers-expanded');
 		this._section.style.height = null;
 		const acceptableHeight = this._map.getSize().y - (this._container.offsetTop + 50);
 		if (acceptableHeight < this._section.clientHeight) {
-			DomUtil.addClass(this._section, 'leaflet-control-layers-scrollbar');
+			this._section.classList.add('leaflet-control-layers-scrollbar');
 			this._section.style.height = `${acceptableHeight}px`;
 		} else {
-			DomUtil.removeClass(this._section, 'leaflet-control-layers-scrollbar');
+			this._section.classList.remove('leaflet-control-layers-scrollbar');
 		}
 		this._checkDisabledLayers();
 		return this;
@@ -166,7 +166,7 @@ export const Layers = Control.extend({
 	// @method collapse(): this
 	// Collapse the control container if expanded.
 	collapse() {
-		DomUtil.removeClass(this._container, 'leaflet-control-layers-expanded');
+		this._container.classList.remove('leaflet-control-layers-expanded');
 		return this;
 	},
 
@@ -256,8 +256,8 @@ export const Layers = Control.extend({
 	_update() {
 		if (!this._container) { return this; }
 
-		DomUtil.empty(this._baseLayersList);
-		DomUtil.empty(this._overlaysList);
+		this._baseLayersList.replaceChildren();
+		this._overlaysList.replaceChildren();
 
 		this._layerControlInputs = [];
 		let baseLayersPresent, overlaysPresent, i, obj, baseLayersCount = 0;

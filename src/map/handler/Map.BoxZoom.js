@@ -41,7 +41,7 @@ export const BoxZoom = Handler.extend({
 	},
 
 	_destroy() {
-		DomUtil.remove(this._pane);
+		this._pane.remove();
 		delete this._pane;
 	},
 
@@ -83,7 +83,7 @@ export const BoxZoom = Handler.extend({
 			this._moved = true;
 
 			this._box = DomUtil.create('div', 'leaflet-zoom-box', this._container);
-			DomUtil.addClass(this._container, 'leaflet-crosshair');
+			this._container.classList.add('leaflet-crosshair');
 
 			this._map.fire('boxzoomstart');
 		}
@@ -101,8 +101,8 @@ export const BoxZoom = Handler.extend({
 
 	_finish() {
 		if (this._moved) {
-			DomUtil.remove(this._box);
-			DomUtil.removeClass(this._container, 'leaflet-crosshair');
+			this._box.remove();
+			this._container.classList.remove('leaflet-crosshair');
 		}
 
 		DomUtil.enableTextSelection();

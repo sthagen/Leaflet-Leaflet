@@ -168,7 +168,7 @@ export const GridLayer = Layer.extend({
 
 	onRemove(map) {
 		this._removeAllTiles();
-		DomUtil.remove(this._container);
+		this._container.remove();
 		map._removeZoomLimit(this);
 		this._container = null;
 		this._tileZoom = undefined;
@@ -310,7 +310,7 @@ export const GridLayer = Layer.extend({
 	_updateOpacity() {
 		if (!this._map) { return; }
 
-		DomUtil.setOpacity(this._container, this.options.opacity);
+		this._container.style.opacity = this.options.opacity;
 
 		const now = +new Date();
 		let nextFrame = false,
@@ -322,7 +322,7 @@ export const GridLayer = Layer.extend({
 
 			const fade = Math.min(1, (now - tile.loaded) / 200);
 
-			DomUtil.setOpacity(tile.el, fade);
+			tile.el.style.opacity = fade;
 			if (fade < 1) {
 				nextFrame = true;
 			} else {
@@ -371,7 +371,7 @@ export const GridLayer = Layer.extend({
 				this._levels[z].el.style.zIndex = maxZoom - Math.abs(zoom - z);
 				this._onUpdateLevel(z);
 			} else {
-				DomUtil.remove(this._levels[z].el);
+				this._levels[z].el.remove();
 				this._removeTilesAtZoom(z);
 				this._onRemoveLevel(z);
 				delete this._levels[z];
@@ -462,7 +462,7 @@ export const GridLayer = Layer.extend({
 
 	_invalidateAll() {
 		for (const z in this._levels) {
-			DomUtil.remove(this._levels[z].el);
+			this._levels[z].el.remove();
 			this._onRemoveLevel(Number(z));
 			delete this._levels[z];
 		}
@@ -770,7 +770,7 @@ export const GridLayer = Layer.extend({
 		const tile = this._tiles[key];
 		if (!tile) { return; }
 
-		DomUtil.remove(tile.el);
+		tile.el.remove();
 
 		delete this._tiles[key];
 
@@ -783,7 +783,7 @@ export const GridLayer = Layer.extend({
 	},
 
 	_initTile(tile) {
-		DomUtil.addClass(tile, 'leaflet-tile');
+		tile.classList.add('leaflet-tile');
 
 		const tileSize = this.getTileSize();
 		tile.style.width = `${tileSize.x}px`;
@@ -844,7 +844,7 @@ export const GridLayer = Layer.extend({
 
 		tile.loaded = +new Date();
 		if (this._map._fadeAnimated) {
-			DomUtil.setOpacity(tile.el, 0);
+			tile.el.style.opacity = 0;
 			Util.cancelAnimFrame(this._fadeFrame);
 			this._fadeFrame = Util.requestAnimFrame(this._updateOpacity, this);
 		} else {
@@ -853,7 +853,7 @@ export const GridLayer = Layer.extend({
 		}
 
 		if (!err) {
-			DomUtil.addClass(tile.el, 'leaflet-tile-loaded');
+			tile.el.classList.add('leaflet-tile-loaded');
 
 			// @event tileload: TileEvent
 			// Fired when a tile loads.

@@ -2,7 +2,6 @@ import {Map} from '../Map';
 import {Handler} from '../../core/Handler';
 import {Draggable} from '../../dom/Draggable';
 import * as Util from '../../core/Util';
-import * as DomUtil from '../../dom/DomUtil';
 import {toLatLngBounds as latLngBounds} from '../../geo/LatLngBounds';
 import {toBounds} from '../../geometry/Bounds';
 
@@ -73,15 +72,14 @@ export const Drag = Handler.extend({
 				map.whenReady(this._onZoomEnd, this);
 			}
 		}
-		DomUtil.addClass(this._map._container, 'leaflet-grab leaflet-touch-drag');
+		this._map._container.classList.add('leaflet-grab', 'leaflet-touch-drag');
 		this._draggable.enable();
 		this._positions = [];
 		this._times = [];
 	},
 
 	removeHooks() {
-		DomUtil.removeClass(this._map._container, 'leaflet-grab');
-		DomUtil.removeClass(this._map._container, 'leaflet-touch-drag');
+		this._map._container.classList.remove('leaflet-grab', 'leaflet-touch-drag');
 		this._draggable.disable();
 	},
 

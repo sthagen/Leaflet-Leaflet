@@ -49,6 +49,23 @@ describe('Popup', () => {
 		expect(map.hasLayer(popup)).to.be(true);
 	});
 
+	it('sets the default \'closeButtonLabel\' on the close button', () => {
+		const popup = L.popup()
+			.setLatLng(center)
+			.openOn(map);
+
+		expect(popup.getElement().querySelector('[aria-label="Close popup"]')).not.to.be(null);
+	});
+
+	it('sets a custom \'closeButtonLabel\' on the close button', () => {
+		const closeButtonLabel = 'TestLabel';
+		const popup = L.popup({closeButtonLabel})
+			.setLatLng(center)
+			.openOn(map);
+
+		expect(popup.getElement().querySelector(`[aria-label="${closeButtonLabel}"]`)).not.to.be(null);
+	});
+
 	it('toggles its visibility when marker is clicked', () => {
 		const marker = L.marker(center);
 		map.addLayer(marker);
@@ -380,7 +397,7 @@ describe('Popup', () => {
 		const popup = new L.Popup(center, {className: 'testClass'})
 			.addTo(map);
 		expect(map.hasLayer(popup)).to.be(true);
-		expect(L.DomUtil.hasClass(popup.getElement(), 'testClass')).to.be(true);
+		expect(popup.getElement().classList.contains('testClass')).to.be(true);
 	});
 
 	it('adds popup with passed content in options while initializing', () => {

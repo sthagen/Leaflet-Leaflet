@@ -1,5 +1,4 @@
 import * as DomEvent from './DomEvent';
-import * as Util from '../core/Util';
 import {Point} from '../geometry/Point';
 import Browser from '../core/Browser';
 
@@ -13,26 +12,6 @@ import Browser from '../core/Browser';
  * SVG elements. The only difference is that classes refer to CSS classes
  * in HTML and SVG classes in SVG.
  */
-
-
-// @property TRANSFORM: String
-// Vendor-prefixed transform style name (e.g. `'webkitTransform'` for WebKit).
-export const TRANSFORM = testProp(
-	['transform', 'webkitTransform', 'OTransform', 'MozTransform', 'msTransform']);
-
-// webkitTransition comes first because some browser versions that drop vendor prefix don't do
-// the same for the transitionend event, in particular the Android 4.1 stock browser
-
-// @property TRANSITION: String
-// Vendor-prefixed transition style name.
-export const TRANSITION = testProp(
-	['webkitTransition', 'transition', 'OTransition', 'MozTransition', 'msTransition']);
-
-// @property TRANSITION_END: String
-// Vendor-prefixed transitionend event name.
-export const TRANSITION_END =
-	TRANSITION === 'webkitTransition' || TRANSITION === 'OTransition' ? `${TRANSITION}End` : 'transitionend';
-
 
 // @function get(id: String|HTMLElement): HTMLElement
 // Returns an element given its DOM id, or returns the element itself
@@ -66,23 +45,6 @@ export function create(tagName, className, container) {
 	return el;
 }
 
-// @function remove(el: HTMLElement)
-// Removes `el` from its parent element
-export function remove(el) {
-	const parent = el.parentNode;
-	if (parent) {
-		parent.removeChild(el);
-	}
-}
-
-// @function empty(el: HTMLElement)
-// Removes all of `el`'s children elements from `el`
-export function empty(el) {
-	while (el.firstChild) {
-		el.removeChild(el.firstChild);
-	}
-}
-
 // @function toFront(el: HTMLElement)
 // Makes `el` the last child of its parent, so it renders in front of the other children.
 export function toFront(el) {
@@ -101,79 +63,6 @@ export function toBack(el) {
 	}
 }
 
-// @function hasClass(el: Element, name: String): Boolean
-// Returns `true` if the element's `class` attribute contains `name`.
-export const hasClass = (el, name) => el.classList.contains(name);
-
-// @function addClass(el: Element, name: String)
-// Adds `name` to the element's `class` attribute.
-// Multiple values can be added by providing a value for `name` delimited by a space character.
-export function addClass(el, name) {
-	const classes = Util.splitWords(name);
-	el.classList.add(...classes);
-}
-
-// @function removeClass(el: Element, name: String)
-// Removes `name` from the element's `class` attribute.
-export const removeClass = (el, name) => el.classList.remove(name);
-
-// @function setClass(el: Element, name: String)
-// Sets the element's `class` attribute to the value of `name`.
-export const setClass = (el, name) => { el.classList.value = name; };
-
-// @function getClass(el: Element): String
-// Returns the value of the element's `class` attribute.
-export const getClass = el => el.classList.value;
-
-// @function setOpacity(el: HTMLElement, opacity: Number)
-// Set the opacity of an element (including old IE support).
-// `opacity` must be a number from `0` to `1`.
-export function setOpacity(el, value) {
-	if ('opacity' in el.style) {
-		el.style.opacity = value;
-	} else if ('filter' in el.style) {
-		_setOpacityIE(el, value);
-	}
-}
-
-function _setOpacityIE(el, value) {
-	let filter = false;
-	const filterName = 'DXImageTransform.Microsoft.Alpha';
-
-	// filters collection throws an error if we try to retrieve a filter that doesn't exist
-	try {
-		filter = el.filters.item(filterName);
-	} catch (e) {
-		// don't set opacity to 1 if we haven't already set an opacity,
-		// it isn't needed and breaks transparent pngs.
-		if (value === 1) { return; }
-	}
-
-	value = Math.round(value * 100);
-
-	if (filter) {
-		filter.Enabled = (value !== 100);
-		filter.Opacity = value;
-	} else {
-		el.style.filter += ` progid:${filterName}(opacity=${value})`;
-	}
-}
-
-// @function testProp(props: String[]): String|false
-// Goes through the array of style names and returns the first name
-// that is a valid style name for an element. If no such name is found,
-// it returns false. Useful for vendor-prefixed styles like `transform`.
-export function testProp(props) {
-	const style = document.documentElement.style;
-
-	for (let i = 0; i < props.length; i++) {
-		if (props[i] in style) {
-			return props[i];
-		}
-	}
-	return false;
-}
-
 // @function setTransform(el: HTMLElement, offset: Point, scale?: Number)
 // Resets the 3D CSS transform of `el` so it is translated by `offset` pixels
 // and optionally scaled by `scale`. Does not have an effect if the
@@ -181,7 +70,7 @@ export function testProp(props) {
 export function setTransform(el, offset, scale) {
 	const pos = offset || new Point(0, 0);
 
-	el.style[TRANSFORM] = `translate3d(${pos.x}px,${pos.y}px,0)${scale ? ` scale(${scale})` : ''}`;
+	el.style.transform = `translate3d(${pos.x}px,${pos.y}px,0)${scale ? ` scale(${scale})` : ''}`;
 }
 
 // @function setPosition(el: HTMLElement, position: Point)
@@ -211,52 +100,45 @@ export function getPosition(el) {
 	return el._leaflet_pos || new Point(0, 0);
 }
 
+const documentStyle = document.documentElement.style;
+// Safari still needs a vendor prefix, we need to detect with property name is supported.
+const userSelectProp = ['userSelect', 'WebkitUserSelect'].find(prop => prop in documentStyle);
+let prevUserSelect;
+
 // @function disableTextSelection()
-// Prevents the user from generating `selectstart` DOM events, usually generated
-// when the user drags the mouse through a page with text. Used internally
+// Prevents the user from selecting text in the document. Used internally
 // by Leaflet to override the behaviour of any click-and-drag interaction on
 // the map. Affects drag interactions on the whole document.
+export function disableTextSelection() {
+	const value = documentStyle[userSelectProp];
+
+	if (value === 'none') {
+		return;
+	}
+
+	prevUserSelect = value;
+	documentStyle[userSelectProp] = 'none';
+}
 
 // @function enableTextSelection()
 // Cancels the effects of a previous [`L.DomUtil.disableTextSelection`](#domutil-disabletextselection).
-export let disableTextSelection;
-export let enableTextSelection;
-let _userSelect;
-if ('onselectstart' in document) {
-	disableTextSelection = function () {
-		DomEvent.on(window, 'selectstart', DomEvent.preventDefault);
-	};
-	enableTextSelection = function () {
-		DomEvent.off(window, 'selectstart', DomEvent.preventDefault);
-	};
-} else {
-	const userSelectProperty = testProp(
-		['userSelect', 'WebkitUserSelect', 'OUserSelect', 'MozUserSelect', 'msUserSelect']);
+export function enableTextSelection() {
+	if (typeof prevUserSelect === 'undefined') {
+		return;
+	}
 
-	disableTextSelection = function () {
-		if (userSelectProperty) {
-			const style = document.documentElement.style;
-			_userSelect = style[userSelectProperty];
-			style[userSelectProperty] = 'none';
-		}
-	};
-	enableTextSelection = function () {
-		if (userSelectProperty) {
-			document.documentElement.style[userSelectProperty] = _userSelect;
-			_userSelect = undefined;
-		}
-	};
+	documentStyle[userSelectProp] = prevUserSelect;
+	prevUserSelect = undefined;
 }
 
 // @function disableImageDrag()
-// As [`L.DomUtil.disableTextSelection`](#domutil-disabletextselection), but
-// for `dragstart` DOM events, usually generated when the user drags an image.
+// Prevents the user from generating `dragstart` DOM events, usually generated when the user drags an image.
 export function disableImageDrag() {
 	DomEvent.on(window, 'dragstart', DomEvent.preventDefault);
 }
 
 // @function enableImageDrag()
-// Cancels the effects of a previous [`L.DomUtil.disableImageDrag`](#domutil-disabletextselection).
+// Cancels the effects of a previous [`L.DomUtil.disableImageDrag`](#domutil-disableimagedrag).
 export function enableImageDrag() {
 	DomEvent.off(window, 'dragstart', DomEvent.preventDefault);
 }
