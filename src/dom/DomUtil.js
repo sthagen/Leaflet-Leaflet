@@ -1,6 +1,5 @@
 import * as DomEvent from './DomEvent';
 import {Point} from '../geometry/Point';
-import Browser from '../core/Browser';
 
 /*
  * @namespace DomUtil
@@ -18,19 +17,6 @@ import Browser from '../core/Browser';
 // if it was passed directly.
 export function get(id) {
 	return typeof id === 'string' ? document.getElementById(id) : id;
-}
-
-// @function getStyle(el: HTMLElement, styleAttrib: String): String
-// Returns the value for a certain style attribute on an element,
-// including computed values or values set through CSS.
-export function getStyle(el, style) {
-	let value = el.style[style] || (el.currentStyle && el.currentStyle[style]);
-
-	if ((!value || value === 'auto') && document.defaultView) {
-		const css = document.defaultView.getComputedStyle(el, null);
-		value = css ? css[style] : null;
-	}
-	return value === 'auto' ? null : value;
 }
 
 // @function create(tagName: String, className?: String, container?: HTMLElement): HTMLElement
@@ -73,22 +59,15 @@ export function setTransform(el, offset, scale) {
 	el.style.transform = `translate3d(${pos.x}px,${pos.y}px,0)${scale ? ` scale(${scale})` : ''}`;
 }
 
+const positions = new WeakMap();
+
 // @function setPosition(el: HTMLElement, position: Point)
 // Sets the position of `el` to coordinates specified by `position`,
 // using CSS translate or top/left positioning depending on the browser
 // (used by Leaflet internally to position its layers).
 export function setPosition(el, point) {
-
-	/*eslint-disable */
-	el._leaflet_pos = point;
-	/* eslint-enable */
-
-	if (Browser.any3d) {
-		setTransform(el, point);
-	} else {
-		el.style.left = `${point.x}px`;
-		el.style.top = `${point.y}px`;
-	}
+	positions.set(el, point);
+	setTransform(el, point);
 }
 
 // @function getPosition(el: HTMLElement): Point
@@ -96,8 +75,7 @@ export function setPosition(el, point) {
 export function getPosition(el) {
 	// this method is only used for elements previously positioned using setPosition,
 	// so it's safe to cache the position for performance
-
-	return el._leaflet_pos || new Point(0, 0);
+	return positions.get(el) ?? new Point(0, 0);
 }
 
 const documentStyle = document.documentElement.style;
