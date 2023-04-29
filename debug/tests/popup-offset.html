@@ -1,8 +1,8 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="utf-8" />
-		<title>Leaflet debug page - ESM</title>
+		<title>Leaflet debug page - Popup Offset</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
 		<link rel="stylesheet" href="../../dist/leaflet.css" />
 		<link rel="stylesheet" href="../css/screen.css" />
@@ -17,14 +17,17 @@
 	<body>
 		<div id="map"></div>
 		<script type="module">
-			import {Map, TileLayer} from 'leaflet';
+			import {TileLayer, Map, Marker} from 'leaflet';
 
-			const map = new Map('map', {
-				center: [39.84, -96.591],
-				zoom: 4,
-			});
+			const osm = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 18});
+			const map = new Map('map').setView([50.5, 30.51], 15).addLayer(osm);
 
-			new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+			new Marker(map.getCenter())
+				.addTo(map)
+				.bindPopup('A pretty CSS popup. <br> Easily customizable.', {
+					offset: [100, 200],
+				})
+				.openPopup();
 		</script>
 	</body>
 </html>

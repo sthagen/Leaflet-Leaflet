@@ -1,8 +1,8 @@
 <!doctype html>
-<html lang="en">
+<html>
 	<head>
 		<meta charset="utf-8" />
-		<title>Leaflet debug page - Remove and Add Layer</title>
+		<title>Leaflet debug page - Reuse Popups</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
 		<link rel="stylesheet" href="../../dist/leaflet.css" />
 		<link rel="stylesheet" href="../css/screen.css" />
@@ -16,19 +16,27 @@
 	</head>
 	<body>
 		<div id="map"></div>
-		<button id="removeAdd">Remove and Add Layer</button>
 		<script type="module">
-			import {Map, TileLayer, DomUtil} from 'leaflet';
+			import {Map, Marker, TileLayer, Popup} from 'leaflet';
 
-			const map = new Map('map', {center: [0, 0], zoom: 3, maxZoom: 4});
-			const osm = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			const map = new Map('map');
+
+			new Marker([51.5, -0.09])
+				.bindPopup('<b>Hello world!</b><br />I am a popup.')
+				.addTo(map);
+
+			const marker2 = new Marker([51.525, -0.09])
+				.addTo(map);
+
+			map.setView([51.505, -0.09], 13);
+
+			new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 				attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 			}).addTo(map);
 
-			DomUtil.get('removeAdd').onclick = () => {
-				map.removeLayer(osm);
-				setTimeout(() => map.addLayer(osm), 1000);
-			};
+			const popup = new Popup().setContent('Previously created');
+
+			marker2.bindPopup(popup);
 		</script>
 	</body>
 </html>
