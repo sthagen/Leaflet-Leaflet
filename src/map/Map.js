@@ -792,7 +792,7 @@ export const Map = Evented.extend({
 		}
 
 		this._layers = [];
-		this._panes = [];
+		this._panes = {};
 		delete this._mapPane;
 		delete this._renderer;
 
@@ -1683,7 +1683,7 @@ export const Map = Evented.extend({
 
 		Util.requestAnimFrame(function () {
 			this
-			    ._moveStart(true, false)
+			    ._moveStart(true, options.noMoveStart ?? false)
 			    ._animateZoom(center, zoom, true);
 		}, this);
 
