@@ -1,13 +1,13 @@
 import {expect} from 'chai';
-import {Class} from 'leaflet';
+import {Class, Evented} from 'leaflet';
 import sinon from 'sinon';
 
 describe('Class', () => {
 	describe('#extend', () => {
 		let Klass,
-		    props,
-		    constructor,
-		    method;
+		props,
+		constructor,
+		method;
 
 		beforeEach(() => {
 			constructor = sinon.spy();
@@ -101,6 +101,32 @@ describe('Class', () => {
 			expect(a.mixin2).to.be.true;
 		});
 
+		it('includes Evented mixins', () => {
+			const Klass2 = Class.extend({
+				includes: Evented.prototype
+			});
+			const a = new Klass2();
+
+			expect(a.on).to.eql(Evented.prototype.on);
+			expect(a.off).to.eql(Evented.prototype.off);
+		});
+
+		it('includes inherited mixins', () => {
+			class A {
+				foo() {}
+			}
+			class B extends A {
+				bar() {}
+			}
+			const Klass2 = Class.extend({
+				includes: B.prototype
+			});
+			const a = new Klass2();
+
+			expect(a.bar).to.eql(B.prototype.bar);
+			expect(a.foo).to.eql(B.prototype.foo);
+		});
+
 		it('grants the ability to include the given mixin', () => {
 			Klass.include({mixin2: true});
 
@@ -177,7 +203,7 @@ describe('Class', () => {
 
 		it('inherits constructor hooks', () => {
 			const spy1 = sinon.spy(),
-			    spy2 = sinon.spy();
+			spy2 = sinon.spy();
 
 			const Klass2 = Klass.extend({});
 
@@ -192,7 +218,7 @@ describe('Class', () => {
 
 		it('does not call child constructor hooks', () => {
 			const spy1 = sinon.spy(),
-			    spy2 = sinon.spy();
+			spy2 = sinon.spy();
 
 			const Klass2 = Klass.extend({});
 
@@ -214,6 +240,64 @@ describe('Class', () => {
 			new Klass2();
 
 			expect(spy1.called).to.be.true;
+		});
+	});
+
+	describe('#extend', () => {
+		it('merges options instead of replacing them', () => {
+			class KlassWithOptions1 extends Class {
+				static {
+					this.setDefaultOptions({
+						foo1: 1,
+						foo2: 2
+					});
+				}
+			}
+			class KlassWithOptions2 extends KlassWithOptions1 {
+				static {
+					this.setDefaultOptions({
+						foo2: 3,
+						foo3: 4
+					});
+				}
+			}
+
+			const a = new KlassWithOptions2();
+			expect(a.options.foo1).to.eql(1);
+			expect(a.options.foo2).to.eql(3);
+			expect(a.options.foo3).to.eql(4);
+		});
+
+		it('inherits constructor hooks', () => {
+			const spy1 = sinon.spy(),
+			spy2 = sinon.spy();
+
+			class Class1 extends Class {}
+			class Class2 extends Class1 {}
+
+			Class1.addInitHook(spy1);
+			Class2.addInitHook(spy2);
+
+			new Class2();
+
+			expect(spy1.called).to.be.true;
+			expect(spy2.called).to.be.true;
+		});
+
+		it('does not call child constructor hooks', () => {
+			const spy1 = sinon.spy(),
+			spy2 = sinon.spy();
+
+			class Class1 extends Class {}
+			class Class2 extends Class1 {}
+
+			Class1.addInitHook(spy1);
+			Class2.addInitHook(spy2);
+
+			new Class1();
+
+			expect(spy1.called).to.be.true;
+			expect(spy2.called).to.eql(false);
 		});
 	});
 

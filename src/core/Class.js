@@ -29,10 +29,10 @@ export class Class {
 		// mix includes into the prototype
 		if (Array.isArray(includes)) {
 			for (const include of includes) {
-				Object.assign(proto, include);
+				NewClass.include(include);
 			}
 		} else if (includes) {
-			Object.assign(proto, includes);
+			NewClass.include(includes);
 		}
 
 		// mix given properties into the prototype
@@ -44,8 +44,6 @@ export class Class {
 			Object.assign(proto.options, props.options);
 		}
 
-		proto._initHooks = [];
-
 		return NewClass;
 	}
 
@@ -53,12 +51,25 @@ export class Class {
 	// [Includes a mixin](#class-includes) into the current class.
 	static include(props) {
 		const parentOptions = this.prototype.options;
-		Object.assign(this.prototype, props);
+		for (const k of getAllMethodNames(props)) {
+			this.prototype[k] = props[k];
+		}
 		if (props.options) {
 			this.prototype.options = parentOptions;
 			this.mergeOptions(props.options);
 		}
 		return this;
+
+		function *getAllMethodNames(obj) {
+			do {
+				if (obj === Object || obj === Object.prototype) {
+					break;
+				}
+				for (const k of Object.getOwnPropertyNames(obj)) {
+					yield k;
+				}
+			} while ((obj = Object.getPrototypeOf(obj)) !== undefined);
+		}
 	}
 
 	// @function setDefaultOptions(options: Object): this
@@ -83,7 +94,9 @@ export class Class {
 			this[fn].apply(this, args);
 		};
 
-		this.prototype._initHooks ??= [];
+		if (!Object.hasOwn(this.prototype, '_initHooks')) { // do not use ??= here
+			this.prototype._initHooks = [];
+		}
 		this.prototype._initHooks.push(init);
 		return this;
 	}
@@ -100,6 +113,11 @@ export class Class {
 
 		// call all constructor hooks
 		this.callInitHooks();
+	}
+
+	initialize(/* ...args */) {
+		// Override this method in subclasses to implement custom initialization logic.
+		// This method is called automatically when a new instance of the class is created.
 	}
 
 	callInitHooks() {
