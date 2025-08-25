@@ -61,6 +61,7 @@ export class BlanketOverlay extends Layer {
 			viewreset: this._reset,
 			zoom: this._onZoom,
 			moveend: this._onMoveEnd,
+			resize: this._resizeContainer,
 			zoomend: this._onZoomEnd
 		};
 		if (this._zoomAnimated) {
@@ -84,8 +85,9 @@ export class BlanketOverlay extends Layer {
 		const scale = this._map.getZoomScale(zoom, this._zoom),
 		viewHalf = this._map.getSize().multiplyBy(0.5 + this.options.padding),
 		currentCenterPoint = this._map.project(this._center, zoom),
-		topLeftOffset = viewHalf.multiplyBy(-scale).add(currentCenterPoint)
-			.subtract(this._map._getNewPixelOrigin(center, zoom));
+		topLeftOffset = viewHalf.multiplyBy(-scale)._add(currentCenterPoint)
+			._subtract(this._map._getNewPixelOrigin(center, zoom))
+			._round();
 
 		DomUtil.setTransform(this._container, topLeftOffset, scale);
 	}
@@ -103,8 +105,6 @@ export class BlanketOverlay extends Layer {
 		this._updateTransform(this._center, this._zoom);
 
 		this._onSettled(ev);
-
-		this._resizeContainer();
 	}
 
 	_reset() {
