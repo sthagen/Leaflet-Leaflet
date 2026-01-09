@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {Bounds, Canvas, CircleMarker, DivIcon, DomEvent, GridLayer, Handler, LatLngBounds, Layer, LeafletMap, Marker, Point, Polygon, TileLayer, Util, Control, LatLng} from 'leaflet';
+import {Bounds, Canvas, CircleMarker, DivIcon, DomEvent, GridLayer, Handler, LatLngBounds, Layer, LeafletMap, Marker, Point, Polygon, TileLayer, Util, LayersControl, LatLng} from 'leaflet';
 import sinon from 'sinon';
 import UIEventSimulator from 'ui-event-simulator';
 import {createContainer, removeMapContainer} from '../SpecHelper.js';
@@ -9,7 +9,7 @@ describe('Map', () => {
 	map;
 
 	beforeEach(() => {
-		container = container = createContainer();
+		container = createContainer();
 		map = new LeafletMap(container);
 	});
 
@@ -1026,7 +1026,7 @@ describe('Map', () => {
 		});
 
 		it('throws if adding something which is not a layer', () => {
-			const control = new Control.Layers();
+			const control = new LayersControl();
 			expect(() => {
 				map.addLayer(control);
 			}).to.throw();
