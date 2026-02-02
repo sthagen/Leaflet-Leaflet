@@ -12,7 +12,7 @@
     "chai": "^6.2.2",
     "eslint": "^9.39.2",
     "eslint-config-mourner": "^4.1.0",
-    "eslint-plugin-baseline-js": "^0.4.2",
+    "eslint-plugin-baseline-js": "^0.5.0",
     "eslint-plugin-import-x": "^4.16.1",
     "http-server": "^14.1.1",
     "husky": "^9.1.7",
@@ -28,7 +28,7 @@
     "mocha": "^11.7.5",
     "prosthetic-hand": "^2.0.0",
     "requirejs": "^2.3.8",
-    "rollup": "^4.56.0",
+    "rollup": "^4.57.1",
     "sinon": "^21.0.1",
     "ssri": "^13.0.0",
     "ui-event-simulator": "^2.0.0"
