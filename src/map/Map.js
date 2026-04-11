@@ -97,8 +97,7 @@ export class LeafletMap extends Evented {
 
 			// @section Animation Options
 			// @option zoomAnimation: Boolean = true
-			// Whether the map zoom animation is enabled. By default it's enabled
-			// in all browsers that support CSS Transitions except Android.
+			// Whether the map zoom animation is enabled.
 			zoomAnimation: true,
 
 			// @option zoomAnimationThreshold: Number = 4
@@ -106,14 +105,12 @@ export class LeafletMap extends Evented {
 			zoomAnimationThreshold: 4,
 
 			// @option fadeAnimation: Boolean = true
-			// Whether the tile fade animation is enabled. By default it's enabled
-			// in all browsers that support CSS Transitions except Android.
+			// Whether the tile fade animation is enabled.
 			fadeAnimation: true,
 
 			// @option markerZoomAnimation: Boolean = true
 			// Whether markers animate their zoom with the zoom animation, if disabled
-			// they will disappear for the length of the animation. By default it's
-			// enabled in all browsers that support CSS Transitions except Android.
+			// they will disappear for the length of the animation.
 			markerZoomAnimation: true,
 
 			// @option transform3DLimit: Number = 2^23
@@ -1231,7 +1228,7 @@ export class LeafletMap extends Evented {
 		return this;
 	}
 
-	_move(center, zoom, data, supressEvent) {
+	_move(center, zoom, data, suppressEvent) {
 		if (zoom === undefined) {
 			zoom = this._zoom;
 		}
@@ -1241,7 +1238,7 @@ export class LeafletMap extends Evented {
 		this._lastCenter = center;
 		this._pixelOrigin = this._getNewPixelOrigin(center);
 
-		if (!supressEvent) {
+		if (!suppressEvent) {
 			// @event zoom: Event
 			// Fired repeatedly during any change in zoom level,
 			// including zoom and fly animations.
@@ -1457,7 +1454,7 @@ export class LeafletMap extends Evented {
 		};
 
 		if (e.type !== 'keypress' && e.type !== 'keydown' && e.type !== 'keyup') {
-			const isMarker = target.getLatLng && (!target._radius || target._radius <= 10);
+			const isMarker = target.getLatLng && (!target._pxRadius || target._pxRadius <= 10);
 			data.containerPoint = isMarker ?
 				this.latLngToContainerPoint(target.getLatLng()) : this.pointerEventToContainerPoint(e);
 			data.layerPoint = this.containerPointToLayerPoint(data.containerPoint);
