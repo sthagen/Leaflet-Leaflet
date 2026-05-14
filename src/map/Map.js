@@ -660,8 +660,7 @@ export class LeafletMap extends Evented {
 			if (this._locationWatchId !== undefined) {
 				navigator.geolocation.clearWatch(this._locationWatchId);
 			}
-			this._locationWatchId =
-			        navigator.geolocation.watchPosition(onResponse, onError, options);
+			this._locationWatchId = navigator.geolocation.watchPosition(onResponse, onError, options);
 		} else {
 			navigator.geolocation.getCurrentPosition(onResponse, onError, options);
 		}
@@ -1271,6 +1270,7 @@ export class LeafletMap extends Evented {
 
 	_stop() {
 		cancelAnimationFrame(this._flyToFrame);
+		cancelAnimationFrame(this._zoomAnimFrame);
 		this._panAnim?.stop();
 		return this;
 	}
@@ -1439,7 +1439,7 @@ export class LeafletMap extends Evented {
 		if (canvasTargets) {
 			// pick only targets with listeners
 			const filtered = canvasTargets.filter(t => t.listens(type, true));
-			targets = filtered.concat(targets);
+			targets = [...filtered, ...targets];
 		}
 
 		if (!targets.length) { return; }
@@ -1704,7 +1704,8 @@ export class LeafletMap extends Evented {
 		// don't animate if the zoom origin isn't within one screen from the current center, unless forced
 		if (options.animate !== true && !this.getSize().contains(offset)) { return false; }
 
-		requestAnimationFrame(() => {
+		this._zoomAnimFrame = requestAnimationFrame(() => {
+			this._zoomAnimFrame = null;
 			this
 				._moveStart(true, options.noMoveStart ?? false)
 				._animateZoom(center, zoom, true);

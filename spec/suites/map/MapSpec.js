@@ -216,16 +216,12 @@ describe('Map', () => {
 		it('prevents firing movestart noMoveStart', (done) => {
 			const movestartSpy = sinon.spy();
 			map.on('movestart', movestartSpy);
-			const moveendSpy = sinon.spy();
-			map.on('moveend', moveendSpy);
+			map.on('moveend', () => {
+				expect(movestartSpy.notCalled).to.eql(true);
+				done();
+			});
 
 			map.setView([51.505, -0.09], 13, {pan: {noMoveStart: true}});
-
-			setTimeout(() => {
-				expect(movestartSpy.notCalled).to.eql(true);
-				expect(moveendSpy.calledOnce).to.eql(true);
-				done();
-			}, 100);
 		});
 	});
 
@@ -1413,9 +1409,7 @@ describe('Map', () => {
 			container.style.visibility = 'hidden';
 		});
 
-		it('move to requested center and zoom, and call zoomend once', function (done) {
-			this.timeout(10000); // This test takes longer than usual due to frames
-
+		it('move to requested center and zoom, and call zoomend once', (done) => {
 			const newCenter = new LatLng(10, 11),
 			newZoom = 12;
 			const callback = function () {
@@ -1425,11 +1419,9 @@ describe('Map', () => {
 			};
 			map.setView([0, 0], 0);
 			map.on('zoomend', callback).flyTo(newCenter, newZoom, {duration: 0.1});
-		});
+		}, 10000);
 
-		it('flyTo start latlng == end latlng', function (done) {
-			this.timeout(10000); // This test takes longer than usual due to frames
-
+		it('flyTo start latlng == end latlng', (done) => {
 			const dc = new LatLng(38.91, -77.04);
 			map.setView(dc, 14);
 
@@ -1440,7 +1432,7 @@ describe('Map', () => {
 			});
 
 			map.flyTo(dc, 4, {duration: 0.1});
-		});
+		}, 10000);
 
 		it('flyTo should honour maxZoom', (done) => {
 			const newCenter = new LatLng(10, 11),
@@ -1458,12 +1450,10 @@ describe('Map', () => {
 			map.flyTo(newCenter, 22, {animate: true, duration: 0.1});
 		});
 
-		it('should handle parameters leading to Math.log(sq) issue', function (done) {
+		it('should handle parameters leading to Math.log(sq) issue', (done) => {
 			container.style.width = '1024px';
 			container.style.height = '1024px';
 			container.style.visibility = 'visible';
-
-			this.timeout(20000);
 
 			const coordinatesA = new LatLng(59.0009, 60.0);
 			const coordinatesB = new LatLng(59, 60.02);
@@ -1479,7 +1469,7 @@ describe('Map', () => {
 			});
 
 			map.flyTo(center, 11, {animate: true});
-		});
+		}, 20000);
 	});
 
 	describe('#zoomIn and #zoomOut', () => {
@@ -1712,7 +1702,7 @@ describe('Map', () => {
 		});
 
 		it('does not pan the map when the target is within bounds', () => {
-			map.panInside(tl, {animate:false});
+			map.panInside(tl, {animate: false});
 			expect(center).to.eql(map.getCenter());
 		});
 

@@ -1,6 +1,9 @@
 import {Icon} from './Icon.js';
 import * as DomUtil from '../../dom/DomUtil.js';
 
+const URL_RE = /^url\((['"])?(.+)\1\)$/;
+const MARKER_ICON_RE = /^(.*)marker-icon\.svg$/;
+
 /*
  * @miniclass DefaultIcon (Icon)
  * @section
@@ -20,14 +23,14 @@ export class DefaultIcon extends Icon {
 
 	static {
 		this.setDefaultOptions({
-			iconUrl:       'marker-icon.svg',
+			iconUrl: 'marker-icon.svg',
 			iconRetinaUrl: 'marker-icon.svg',
-			shadowUrl:     'marker-shadow.svg',
-			iconSize:    [25, 41],
-			iconAnchor:  [12, 41],
+			shadowUrl: 'marker-shadow.svg',
+			iconSize: [25, 41],
+			iconAnchor: [12, 41],
 			popupAnchor: [1, -34],
 			tooltipAnchor: [16, -28],
-			shadowSize:  [41, 41]
+			shadowSize: [41, 41]
 		});
 	}
 
@@ -46,7 +49,7 @@ export class DefaultIcon extends Icon {
 		// `DefaultIcon` will try to auto-detect the location of the
 		// blue icon images. If you are placing these images in a non-standard
 		// way, set this option to point to the right path.
-		return (this.options.imagePath || DefaultIcon.imagePath) + url;
+		return (this.options.imagePath ?? DefaultIcon.imagePath) + url;
 	}
 
 	_stripUrl(path) {	// separate function to use in tests
@@ -54,8 +57,8 @@ export class DefaultIcon extends Icon {
 			const match = re.exec(str);
 			return match && match[idx];
 		};
-		path = strip(path, /^url\((['"])?(.+)\1\)$/, 2);
-		return path && strip(path, /^(.*)marker-icon\.svg$/, 1);
+		path = strip(path, URL_RE, 2);
+		return path && strip(path, MARKER_ICON_RE, 1);
 	}
 
 	_detectIconPath() {

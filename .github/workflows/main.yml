@@ -1,185 +1,147 @@
 name: CI
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
 permissions:
   contents: read
 env:
   NODE_VERSION: 24
 jobs:
-  setup:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v6
-
-      - name: Set up Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          check-latest: true
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build project
-        run: npm run build
-
-      - name: Cache setup
-        uses: actions/cache@v5
-        with:
-          path: ./*
-          key: ${{ runner.os }}-${{ github.ref }}-${{ github.sha }}-setup
-
   build-docs:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v6
 
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+      - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
           working-directory: ./docs
 
-      - name: Run jekyll build
-        working-directory: ./docs
+      - working-directory: ./docs
         run: bundle exec jekyll build --strict_front_matter
 
   lint:
-    needs: setup
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
-      - name: Restore setup
-        uses: actions/cache@v5
-        with:
-          path: ./*
-          key: ${{ runner.os }}-${{ github.ref }}-${{ github.sha }}-setup
+      - uses: actions/checkout@v6
 
-      - name: Set up Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: Run lint task
-        run: npm run lint
-
-  bundlemon:
-    needs: setup
-    if: github.repository_owner == 'Leaflet'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Restore setup
-        uses: actions/cache@v5
-        with:
-          path: ./*
-          key: ${{ runner.os }}-${{ github.ref }}-${{ github.sha }}-setup
-
-      - name: Set up Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: Build project
-        run: npm run build
-
-      - name: Run bundlemon task
-        run: npm run bundlemon
-        env:
-          CI_COMMIT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-
-  test-ssr:
-    needs: setup
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Restore setup
-        uses: actions/cache@v5
-        with:
-          path: ./*
-          key: ${{ runner.os }}-${{ github.ref }}-${{ github.sha }}-setup
-
-      - name: Set up Node
-        uses: actions/setup-node@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
 
-      - name: Run Node.js SSR script
-        run: node ./spec/ssr/ssr_node.js
+      - run: npm ci
+      - run: npm run lint
 
-      - name: Set up Deno
-        uses: denoland/setup-deno@v2
+  bundlemon:
+    if: github.repository_owner == 'Leaflet'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+      - run: npm run bundlemon
+        env:
+          CI_COMMIT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+
+  test-ssr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+      - run: node ./spec/ssr/ssr_node.js
+
+      - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
 
-      - name: Run Deno SSR script
-        run: deno run ./spec/ssr/ssr_deno.js
+      - run: deno run ./spec/ssr/ssr_deno.js
 
   test:
-    needs: setup
     runs-on: ${{ matrix.os || 'ubuntu-latest' }}
+    timeout-minutes: 8
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.playwright-browsers
     strategy:
       fail-fast: false
       matrix:
         include:
-          - browser: Chrome
-          - browser: Firefox
-          - browser: FirefoxRetina
-          - browser: Chrome
+          - project: chromium
+          - project: firefox
+          - project: chromium-retina
+          - project: chromium
             os: windows-latest
-          - browser: Chrome
-            os: macos-latest
-          - browser: SafariNative
+          - project: webkit
             os: macos-latest
     steps:
-      - name: Restore setup
-        uses: actions/cache@v5
-        with:
-          path: ./*
-          key: ${{ runner.os }}-${{ github.ref }}-${{ github.sha }}-setup
+      - uses: actions/checkout@v6
 
-      - name: Set up Node
-        uses: actions/setup-node@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: npm
 
-      - name: Set up Google Chrome
-        uses: browser-actions/setup-chrome@v2
-        if: contains(matrix.browser, 'Chrome')
+      - run: npm ci
 
-      - name: Set up Firefox
-        uses: browser-actions/setup-firefox@v1
-        if: contains(matrix.browser, 'Firefox')
-
-      - name: Run tests on ${{ matrix.browser }}
-        run: npm test -- --browsers ${{ matrix.browser }} --single-run
-
-      - name: Run tests on ${{ matrix.browser }} with touch
-        run: npm test -- --browsers ${{ matrix.browser }} --touch-browser --single-run
-
-  publish-artifacts:
-    permissions: 
-      contents: write 
-    needs: setup
-    if: github.repository_owner == 'Leaflet' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Restore setup
+      - name: Cache Playwright browsers
         uses: actions/cache@v5
         with:
-          path: ./*
-          key: ${{ runner.os }}-${{ github.ref }}-${{ github.sha }}-setup
+          path: ${{ env.PLAYWRIGHT_BROWSERS_PATH }}
+          key: pw-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install Playwright browser
+        run: npx playwright install ${{ matrix.project == 'chromium-retina' && 'chromium' || matrix.project }}
+
+      - name: Run tests on ${{ matrix.project }}
+        run: npx vitest --run --project=${{ matrix.project }}
+
+      - name: Run tests on ${{ matrix.project }} with touch
+        run: npx vitest --run --project=${{ matrix.project }}
+        env:
+          VITE_TOUCH: '1'
+
+  publish-artifacts:
+    permissions:
+      contents: write
+    if: github.repository_owner == 'Leaflet' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
 
       - name: Compress artifacts
         working-directory: dist
         run: zip -r leaflet.zip . ../CHANGELOG.md ../LICENSE ../README.md
 
       - name: Publish development snapshot
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: dev
           name: Development snapshot
@@ -190,21 +152,20 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   publish-npm:
-    needs: setup
     if: github.repository_owner == 'Leaflet' && startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
-      - name: Restore setup
-        uses: actions/cache@v5
-        with:
-          path: ./*
-          key: ${{ runner.os }}-${{ github.ref }}-${{ github.sha }}-setup
+      - uses: actions/checkout@v6
 
-      - name: Set up Node
-        uses: actions/setup-node@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: npm
           registry-url: https://registry.npmjs.org
+
+      - run: npm ci
+      - run: npm run build
 
       - name: Publish to NPM
         run: |

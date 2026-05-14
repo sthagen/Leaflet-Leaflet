@@ -34,6 +34,16 @@ import {FeatureGroup} from './FeatureGroup.js';
  * 	.addTo(map);
  * ```
  *
+ * **Security note.** Tooltip string content is rendered as HTML. If your content
+ * may include untrusted input (e.g. data from users or external APIs), sanitize
+ * it with a library like [DOMPurify](https://github.com/cure53/DOMPurify), or
+ * build a DOM element using `textContent` to render it as plain text:
+ *
+ * ```js
+ * const el = document.createElement('div');
+ * el.textContent = untrustedString;
+ * marker.bindTooltip(el);
+ * ```
  *
  * Note about tooltip offset. Leaflet takes two options in consideration
  * for computing tooltip offsetting:
@@ -233,6 +243,7 @@ LeafletMap.include({
 	// @alternative
 	// @method openTooltip(content: String|HTMLElement, latlng: LatLng, options?: Tooltip options): this
 	// Creates a tooltip with the specified content and options and open it.
+	// String content is rendered as HTML; sanitize untrusted input or pass an `HTMLElement` with safe `textContent` instead.
 	openTooltip(tooltip, latlng, options) {
 		this._initOverlay(Tooltip, tooltip, latlng, options)
 			.openOn(this);
@@ -267,8 +278,11 @@ Layer.include({
 
 	// @method bindTooltip(content: String|HTMLElement|Function|Tooltip, options?: Tooltip options): this
 	// Binds a tooltip to the layer with the passed `content` and sets up the
-	// necessary event listeners. If a `Function` is passed it will receive
-	// the layer as the first argument and should return a `String` or `HTMLElement`.
+	// necessary event listeners. A `String` argument is rendered as HTML; if it
+	// may contain untrusted input, sanitize it (e.g. with DOMPurify) or pass an
+	// `HTMLElement` with safe `textContent` instead. If a `Function` is passed
+	// it will receive the layer as the first argument and should return a
+	// `String` or `HTMLElement`.
 	bindTooltip(content, options) {
 
 		if (this._tooltip && this.isTooltipOpen()) {
@@ -366,6 +380,7 @@ Layer.include({
 
 	// @method setTooltipContent(content: String|HTMLElement|Tooltip): this
 	// Sets the content of the tooltip bound to this layer.
+	// String content is rendered as HTML; sanitize untrusted input or pass an `HTMLElement` with safe `textContent` instead.
 	setTooltipContent(content) {
 		this._tooltip?.setContent(content);
 		return this;
@@ -388,7 +403,7 @@ Layer.include({
 	_addFocusListenersOnLayer(layer, remove) {
 		const el = typeof layer.getElement === 'function' && layer.getElement();
 		if (el) {
-			const onOff = remove ? 'off' : 'on';
+			const toggle = remove ? DomEvent.off : DomEvent.on;
 			if (!remove) {
 				// Remove focus listener, if already existing
 				el._leaflet_focus_handler && DomEvent.off(el, 'focus', el._leaflet_focus_handler, this);
@@ -402,8 +417,8 @@ Layer.include({
 				};
 			}
 
-			el._leaflet_focus_handler && DomEvent[onOff](el, 'focus', el._leaflet_focus_handler, this);
-			DomEvent[onOff](el, 'blur', this.closeTooltip, this);
+			el._leaflet_focus_handler && toggle(el, 'focus', el._leaflet_focus_handler, this);
+			toggle(el, 'blur', this.closeTooltip, this);
 
 			if (remove) {
 				delete el._leaflet_focus_handler;
